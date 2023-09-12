@@ -1,0 +1,159 @@
+// 
+method
+url
+form-data request
+
+// -----------auth login---------------
+POST
+http://127.0.0.1:8000/api/auth/login
+{
+    "email": "minhthanh@gmail.com",
+    "password": "123456"
+}
+// -----------auth register--------------
+POST
+http://127.0.0.1:8000/api/auth/register
+{
+    "name": "Minh Thanhf",
+    "email": "minhthanh@gmail.com",
+    "password": "123456",
+    "phone_number": "0123456789",
+    "address": "Hue"
+}
+// -----------set user---------------
+GET
+http://127.0.0.1:8000/api/auth/me
+header: bearer token: ....
+--------------------------------------------------------------------------------------------
+// -----------get list user---------------
+GET
+http://127.0.0.1:8000/api/users?where=name[like]ti&page=1&limit=10
+// -----------get user by id------------------
+GET
+http://127.0.0.1:8000/api/users/2
+// -----------update user---------------
+PUT
+bearer
+http://127.0.0.1:8000/api/users/1
+{
+    "id": 1,
+    "address": "Hue"
+}
+// -----------resetPassword---------------
+PUT
+bearer
+http://127.0.0.1:8000/api/users/1/resetPassword
+{
+    "id": 1,
+    "password": "123456"
+}
+// -----------lockUser---------------
+PUT
+bearer
+http://127.0.0.1:8000/api/users/1/lockUser
+{
+    "id": 1,
+    "is_lock": true
+}
+// -----------actionFriendInvitation---------------
+POST
+bearer
+http://127.0.0.1:8000/api/users/actionFriendInvitation
+{
+    "owner_id": 3,
+    "target_id": 1,
+    "status": "pending"
+}
+message--------------------------------------------------------------------------------------------
+// -----------sendMessage---------------
+POST
+bearer
+http://127.0.0.1:8000/api/messages/sendMessage
+{
+    "content": "Hi",
+    "path": "",
+    "is_deleted": false,
+    "sender_id": 2,
+    "conversation_id": 1
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
