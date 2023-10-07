@@ -2,6 +2,7 @@
 
 namespace App\Services\Message;
 
+use App\Events\MessageSent;
 use App\Http\Filters\BaseFilter;
 use App\Http\Requests\Message\StoreMessageRequest;
 use App\Http\Responses\BaseHTTPResponse;
@@ -29,7 +30,7 @@ class MessageService extends BaseService implements IMessageService
     /**
      * Create message and create all user seen status 
      */
-    public static function storeMessage(StoreMessageRequest $request)
+    public static function createMessage(StoreMessageRequest $request)
     {
         if ($request->input("content") && $request->input("path")) {
             throw new \Exception("Both 'content' and 'path' cannot be empty.");
@@ -41,28 +42,34 @@ class MessageService extends BaseService implements IMessageService
             "sender_id" => $request->input("sender_id"),
             "conversation_id" => $request->input("conversation_id"),
         ];
-        return self::$messageRepository->createMessageAndStatus($requestData);
+        $data = self::$messageRepository->createMessageAndStatus($requestData);
+        broadcast(new MessageSent($data));
+        return $data;
     }
-    /**
-     * Create message and create all user seen status 
-     */
-    public static function userSeen(Request $request)
+    public static function seenMessage(Request $request)
     {
         $requestData = [
-            "user_id" => $request->input("content") ? $request->input("content") : null,
-            "time" => $request->input("path") ? $request->input("path") : null, // ? message_id
-            "is_seen" => true,
+            "user_id" => $request->input("user_id"),
+            "conversation_id" => $request->input("conversation_id"),
         ];
+        return self::$messageRepository->seenMessage($requestData);
     }
-    /**
-     * Delete message
-     */
-    public static function deleteMessage(Request $request)
+    public static function removeMessage(int $messageId)
     {
         $requestData = [
-            "send_id" => $request->input("content") ? $request->input("content") : null,
-            "conversation_id" => $request->input("path") ? $request->input("path") : null, // ? message_id
-            "is_deleted" => true,
+            'is_deleted' => true
         ];
+        return self::$messageRepository->update($requestData, $messageId);
+    }
+    public static function restoreMessage(int $messageId)
+    {
+        $requestData = [
+            'is_deleted' => false
+        ];
+        return self::$messageRepository->update($requestData, $messageId);
+    }
+    public static function deleteMessage(int $messageId)
+    {
+        return self::$messageRepository->destroy($messageId);
     }
 }

@@ -11,7 +11,7 @@ class MessageUser extends Model
     public $timestamps = true;
     protected $fillable = [
         'id',
-        'status',
+        'is_seen',
         'user_id',
         'message_id'
     ];

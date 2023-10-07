@@ -13,6 +13,19 @@ class UserRepository extends BaseRepository implements IUserRepository
     {
         return User::class;
     }
+    function createUser(mixed $data)
+    {
+        $pathAvatar = 'media/userAvatar/defautUser.png';
+        $user = User::create([
+            'name' => $data["name"],
+            'email' => $data["email"],
+            'avatar' => asset($pathAvatar),
+            'password' => bcrypt($data["password"]),
+            'phone_number' => $data["phone_number"],
+            'address' => $data["address"]
+        ]);
+        return $user;
+    }
     function updateUser(mixed $data, mixed $id)
     {
         $user = User::findOrFail($id);

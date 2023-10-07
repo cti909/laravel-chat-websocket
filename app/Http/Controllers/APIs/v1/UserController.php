@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Notification\StoreNotificationRequest;
 use App\Http\Requests\User\LockUserRequest;
 use App\Http\Requests\User\ResetPasswordRequest;
+use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Responses\BaseHTTPResponse;
 use App\Http\Responses\BaseResponse;
@@ -63,6 +64,28 @@ class UserController extends Controller
         }
     }
     /**
+     * save
+     */
+    public function store(StoreUserRequest $request)
+    {
+        try {
+            $data = UserService::createUser($request);
+            return $this->success(
+                $request,
+                $data,
+                MessageConstant::$CREATE_USER_SUCCESS,
+                201,
+                BaseHTTPResponse::$HTTP[201]
+            );
+        } catch (\Throwable $th) {
+            return $this->error(
+                $request,
+                $th,
+                MessageConstant::$CREATE_USER_FAILED
+            );
+        }
+    }
+    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, mixed $id)
@@ -71,8 +94,8 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             // if (Auth::user()->id != $comment->creator_id)
             //     throw new Exception("User doesn't have permission to edit");
-            $update_data = UserService::updateUser($request, $id);
-            $data = UserService::getUserList($request);
+            $data = UserService::updateUser($request, $id);
+            // $data = UserService::getUserList($request);
             return $this->success(
                 $request,
                 $data,
@@ -88,7 +111,25 @@ class UserController extends Controller
             );
         }
     }
-
+    public function destroy(Request $request, mixed $id)
+    {
+        try {
+            $data = UserService::deleteUser($id);
+            return $this->success(
+                $request,
+                $data,
+                MessageConstant::$DELETE_USER_SUCCESS
+            );
+        } catch (\Throwable $th) {
+            return $this->error(
+                $request,
+                $th,
+                MessageConstant::$DELETE_USER_FAILED,
+                400,
+                'Bad Request'
+            );
+        }
+    }
     public function resetPassword(ResetPasswordRequest $request, mixed $id)
     {
         try {
@@ -96,11 +137,13 @@ class UserController extends Controller
             // if (Auth::user()->id != $comment->creator_id)
             //     throw new Exception("User doesn't have permission to edit");
             $update_data = UserService::resetPassword($request, $id);
-            $data = UserService::getUserList($request);
+            // $data = UserService::getUserList($request);
             return $this->success(
                 $request,
-                $data,
+                null,
                 MessageConstant::$RESET_PASSWORD_SUCCESS,
+                204,
+                BaseHTTPResponse::$HTTP[204]
             );
         } catch (\Throwable $th) {
             return $this->error(
@@ -116,8 +159,7 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $update_data = UserService::lockUser($request, $id);
-            $data = UserService::getUserList($request);
+            $data = UserService::lockUser($request, $id);
             return $this->success(
                 $request,
                 $data,
@@ -155,42 +197,5 @@ class UserController extends Controller
                 'Bad Request'
             );
         }
-    }
-    public function isOnline(Request $request, $user_id)
-    {
-        $user['id'] = $user_id;
-        Cache::put('user-is-online-' . $user_id, $user_id, 3600);
-        broadcast(new UserOnline($user));
-    }
-    public function listOnlineUsers($users)
-    {
-
-
-        //TODO
-        // Use userId to get all users in friends list
-        // run Cache::get('user-is-online-'.$friendId) in a loop
-        // store results in an array
-        // send results in response
-        error_log('IN LISTONLINEUSERS FUNCTION');
-
-        foreach ($users as $channel) {
-            $userId = $channel->users[0]->id;
-            $userData = $channel->users[0];
-            error_log(Cache::get('user-is-online-' . $userId));
-            if (Cache::has('user-is-online-' . $userId)) {
-                $channel->users[0]->is_online = 1;
-            } else {
-                $channel->users[0]->is_online = 0;
-            }
-        }
-
-        return $users;
-    }
-    public function isOffline(Request $request, $user_id)
-    {
-        $user['id'] = $user_id;
-        error_log("IN ISOFFLINE");
-        Cache::forget('user-is-online-' . $user_id);
-        broadcast(new UserOffline($user));
     }
 }

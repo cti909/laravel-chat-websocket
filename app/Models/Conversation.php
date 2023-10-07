@@ -13,6 +13,7 @@ class Conversation extends Model
         'id',
         'name',
         'member_count',
+        'type',
     ];
     function messages()
     {

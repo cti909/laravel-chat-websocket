@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Http\Filters\BaseFilter;
 use App\Http\Requests\Notification\StoreNotificationRequest;
 use App\Http\Requests\User\ResetPasswordRequest;
+use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Responses\BaseHTTPResponse;
 use App\Repositories\User\IUserRepository;
@@ -50,10 +51,17 @@ class UserService extends BaseService implements IUserService
             'page' => $page // page cần lấy
         ]);
     }
+
     public static function getUserById($id)
     {
         return self::$userRepository->findById($id);
     }
+
+    public static function createUser(StoreUserRequest $request)
+    {
+        return self::$userRepository->createUser($request->input());
+    }
+
     public static function updateUser(UpdateUserRequest $request, $id)
     {
         $image_name = null;
@@ -64,14 +72,22 @@ class UserService extends BaseService implements IUserService
         }
         return self::$userRepository->update($request->input(), $id);
     }
+
+    public static function deleteUser(mixed $id)
+    {
+        return self::$userRepository->destroy($id);
+    }
+
     public static function resetPassword(ResetPasswordRequest $request, mixed $id)
     {
         return self::$userRepository->resetUserPassword($request->input(), $id);
     }
+
     public static function lockUser(Request $request, mixed $id)
     {
         return self::$userRepository->update($request->input(), $id);
     }
+
     public static function actionFriendInvitation(Request $request)
     {
         $request_data = [

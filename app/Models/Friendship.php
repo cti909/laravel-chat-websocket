@@ -11,15 +11,15 @@ class Friendship extends Model
     public $timestamps = true;
     protected $fillable = [
         'id',
-        'owner_id',
-        'target_id',
+        'sender_id',
+        'receiver_id',
         'status'
     ];
-    function owner()
+    function sender()
     {
         return $this->belongsTo(User::class);
     }
-    function target()
+    function receiver()
     {
         return $this->belongsTo(User::class);
     }

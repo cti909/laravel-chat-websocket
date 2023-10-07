@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Message;
+namespace App\Http\Requests\Conversation;
 
 use App\Http\Responses\BaseResponse;
 use Illuminate\Contracts\Validation\Validator;
@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-class StoreMessageRequest extends FormRequest
+class UpdateConversationRequest extends FormRequest
 {
     use BaseResponse;
     /**
@@ -27,11 +27,7 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => ['string', 'nullable'],
-            'path' => ['string', 'nullable'],
-            'is_deleted' => ['boolean'],
-            'sender_id' => ['required', 'numeric', Rule::exists('users', 'id')],
-            'conversation_id' => ['required', 'numeric', Rule::exists('conversations', 'id')],
+            'name' => ['required', 'string']
         ];
     }
     protected function failedValidation(Validator $validator): void

@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Message;
+namespace App\Http\Requests\User;
 
 use App\Http\Responses\BaseResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule;
 
-class StoreMessageRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     use BaseResponse;
     /**
@@ -27,11 +26,12 @@ class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => ['string', 'nullable'],
-            'path' => ['string', 'nullable'],
-            'is_deleted' => ['boolean'],
-            'sender_id' => ['required', 'numeric', Rule::exists('users', 'id')],
-            'conversation_id' => ['required', 'numeric', Rule::exists('conversations', 'id')],
+            'name' => ['required', 'string'],
+            'email' => ['required', 'string', 'email', 'unique:users'],
+            'password' => ['required', 'string', 'min:6'],
+            'phone_number' => ['required', 'string', 'size:10'],
+            'address' => ['required', 'string'],
+            'avatar' => [],
         ];
     }
     protected function failedValidation(Validator $validator): void

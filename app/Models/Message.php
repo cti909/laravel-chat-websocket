@@ -13,18 +13,17 @@ class Message extends Model
         'id',
         'content',
         'path',
-        'status',
         'is_deleted',
+        'sender_id',
         'conversation_id',
-        'sender_id'
     ];
-    function owner()
+    function sender()
     {
         return $this->belongsTo(User::class);
     }
-    function target()
+    function conversation()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Conversation::class);
     }
     function messageUser()
     {

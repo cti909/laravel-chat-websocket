@@ -24,6 +24,9 @@ http://127.0.0.1:8000/api/auth/register
 GET
 http://127.0.0.1:8000/api/auth/me
 header: bearer token: ....
+
+
+
 --------------------------------------------------------------------------------------------
 // -----------get list user---------------
 GET
@@ -64,11 +67,127 @@ http://127.0.0.1:8000/api/users/actionFriendInvitation
     "target_id": 1,
     "status": "pending"
 }
+friend--------------------------------------------------------------------------------------------
+// -----------getFriendList---------------
+GET
+bearer
+http://127.0.0.1:8000/api/friends/all?status=accept&infor=t
+// -----------getAllFriendInvitation---------------
+GET
+bearer
+http://127.0.0.1:8000/api/friends
+// -----------sendFriendInvation---------------
+POST
+bearer
+http://127.0.0.1:8000/api/friends
+{
+    "sender_id": 2,
+    "receiver_id": 2
+}
+
+// -----------acceptInvition---------------
+patch
+bearer
+http://127.0.0.1:8000/api/friends/7/accept
+// -----------rejectInvition---------------
+PUT
+bearer
+http://127.0.0.1:8000/api/friends/7/reject
+// -----------rejectInvition---------------
+patch
+bearer
+http://127.0.0.1:8000/api/friends/7/unfriend
+
+// -----------deleteFriendInvation with reject---------------
+DELETE
+bearer
+http://127.0.0.1:8000/api/friends/4
+// -----------cancelFriendInvation with pending---------------
+DELETE
+bearer
+http://127.0.0.1:8000/api/friends/8/cancel
+
+
+conversation--------------------------------------------------------------------------------------------
+// -----------createConversation---------------
+POST
+bearer
+http://127.0.0.1:8000/api/conversations
+{
+    "name": "group1",
+    "member_count": 3,
+    "type": "public",
+    "user_list": [
+        {
+            "member_id": 2,
+            "is_owner": 1
+        },
+        {
+            "member_id": 3,
+            "is_owner": 0
+        },
+         {
+            "member_id": 4,
+            "is_owner": 0
+        }
+    ]
+}
+// -----------getAllConversation of me---------------
+GET
+bearer
+http://127.0.0.1:8000/api/conversations?member_id=2
+
+// -----------getAllConversation of me have messages---------------
+GET
+bearer
+http://127.0.0.1:8000/api/conversations/all?member_id=2
+// -----------getDetailConversation---------------
+GET
+bearer
+http://127.0.0.1:8000/api/conversations/3
+// -----------updateConversation (name)---------------
+PATCH
+bearer
+http://127.0.0.1:8000/api/conversations/3
+{
+    "name": "khdl"
+}
+// -----------addMember---------------
+PATCH
+bearer
+http://127.0.0.1:8000/api/conversations/3/addMember
+{
+    "member_id": 1
+}
+// -----------kickMember---------------
+PATCH
+bearer
+http://127.0.0.1:8000/api/conversations/3/kickMember
+{
+    "owner_id": 2,
+    "member_id": 1
+}
+// -----------leaveConversation---------------
+PATCH
+bearer
+http://127.0.0.1:8000/api/conversations/3/leave
+{
+    "member_id": 1
+}
+// -----------deleteConversation---------------
+DELETE
+bearer
+http://127.0.0.1:8000/api/conversations/3
+{
+    "owner_id": 1
+}
+
+
 message--------------------------------------------------------------------------------------------
 // -----------sendMessage---------------
 POST
 bearer
-http://127.0.0.1:8000/api/messages/sendMessage
+http://127.0.0.1:8000/api/messages
 {
     "content": "Hi",
     "path": "",
@@ -76,10 +195,30 @@ http://127.0.0.1:8000/api/messages/sendMessage
     "sender_id": 2,
     "conversation_id": 1
 }
-
-
-
-
+// -----------seenMessage---------------
+POST
+bearer
+http://127.0.0.1:8000/api/messages/seen
+{
+    "user_id": 3,
+    "conversation_id": 4
+}
+// -----------seenMessage---------------
+POST
+bearer
+http://127.0.0.1:8000/api/messages/seen
+{
+    "user_id": 3,
+    "conversation_id": 4
+}
+// -----------removeMessage---------------
+patch
+bearer
+http://127.0.0.1:8000/api/messages/2/remove
+// -----------restoreMessage---------------
+patch
+bearer
+http://127.0.0.1:8000/api/messages/2/restore
 
 
 

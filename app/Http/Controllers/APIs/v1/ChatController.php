@@ -21,7 +21,9 @@ class ChatController extends Controller
     {
         $userId = $request->input("userId");
         $message = $request->input("message");
-        broadcast(new PrivateWebSocket($userId, $message));
+        $conversationId = $request->input("conversationId");
+        $type = $request->input("type");
+        broadcast(new MessageSent($userId, $message, $conversationId, $type));
         // event(new PrivateWebSocket($userId, $message));
     }
 }

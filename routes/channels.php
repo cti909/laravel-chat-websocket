@@ -34,7 +34,8 @@ Broadcast::channel('chat.private.{conversationId}', function ($user, $conversati
 });
 
 Broadcast::channel('chat.public.{conversationId}', function ($user, $conversationId) {
-    return (int) $user->id === (int) $conversationId;
+    // return (int) $user->id === (int) $conversationId;
+    return true;
 });
 
 // Broadcast::channel('chat.conversation.{conversationId}', function ($user, $conversationId) {

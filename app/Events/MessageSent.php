@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Conversation;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,27 +16,34 @@ class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $userId;
-    protected $message;
-    protected $conversationId;
-    protected $type;
+    protected $id;
+    protected $content;
+    protected $path;
+    protected $sender_id;
+    protected $conversation_id;
+    protected $created_at;
+    protected $updated_at;
     /**
      * Create a new event instance.
      */
-    public function __construct(int $userId, string $message, int $conversationId, string $type)
+    public function __construct(mixed $data)
     {
-        $this->userId = $userId;
-        $this->message = $message;
-        $this->conversationId = $conversationId;
-        $this->type = $type;
+        $this->id = $data->id;
+        $this->content = $data->content;
+        $this->path = $data->path;
+        $this->sender_id = $data->sender_id;
+        $this->conversation_id = $data->conversation_id;
+        $this->created_at = $data->created_at;
+        $this->updated_at = $data->updated_at;
     }
 
     public function broadcastOn(): Channel
     {
-        if ($this->type === "private") {
-            return new PrivateChannel("chat.private." . $this->conversationId);
-        } else if ($this->type === "public") {
-            return new PresenceChannel("chat.public." . $this->conversationId);
+        $conversation = Conversation::where('id', $this->conversation_id)->first();
+        if ($conversation->type == "private") {
+            return new PrivateChannel("chat.private." . $this->conversation_id);
+        } else if ($conversation->type == "public") {
+            return new PresenceChannel("chat.public." . $this->conversation_id);
         }
     }
     public function broadcastAs()
@@ -44,9 +53,21 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastWith(): array
     {
+        $sender = User::where('id', $this->sender_id)->first();
         return [
-            'userId' => $this->userId,
-            'mess' => $this->message,
+            'id' => $this->id,
+            'content' => $this->content,
+            'path' => $this->path,
+            'sender_id' => $this->sender_id,
+            'conversation_id' => $this->conversation_id,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'sender' => [
+                'id' => $sender->id,
+                'name' => $sender->name,
+                'email' => $sender->email,
+                'avatar' => $sender->avatar
+            ]
         ];
     }
 }

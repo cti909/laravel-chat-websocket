@@ -18,67 +18,90 @@ class MessageController extends Controller
     {
         new MessageService(new MessageRepository());
     }
-    // // Lay danh sach tin nhan cua 1 chanel
-    // public function getMessages(Request $request, $channel_id)
-    // {
 
-    //     return Message::where("channel_id", $channel_id)->with('user.details')->get();
-    // }
-
-    public function store(StoreMessageRequest $request)
+    public function createMessage(StoreMessageRequest $request)
     {
         try {
-            $data = MessageService::storeMessage($request);
+            $data = MessageService::createMessage($request);
             return $this->success(
                 $request,
                 $data,
-                MessageConstant::$GET_LIST_USERS_SUCCESS,
+                MessageConstant::$CREATE_MESSAGE_SUCCESS,
             );
         } catch (\Throwable $th) {
             return $this->error(
                 $request,
                 $th,
-                MessageConstant::$GET_LIST_USERS_SUCCESS
+                MessageConstant::$CREATE_MESSAGE_FAILED
             );
         }
-
-
-        // $userId = $request->input("userId");
-        // $message = $request->input("message");
-        // broadcast(new PrivateWebSocket($userId, $message));
-
-        // $message = auth()->user()->messages()->create([
-        //     'message' => $request->message,
-        //     'channel_id' => $request->channel_id
-        // ]);
-        // $user = User::where('id', auth()->user()->id)->with('details')->first();
-
-        // broadcast(new MessageSent($user, $message, $request->channel_id, $request->channel_type));
     }
-    // public function directMessage(Request $request)
-    // {
-    //     $sender = auth()->user()->id;
-    //     $receiver = $request->receiver;
-
-
-    //     $channelIsFound = Channel::where('type', 'dm')->whereHas('users', function ($q) use ($sender) {
-    //         $q->where('user_id', $sender);
-    //     })->whereHas('users', function ($q) use ($receiver) {
-    //         $q->where('user_id', $receiver);
-    //     })->first();
-    //     error_log("CHANNEL FOUND");
-    //     error_log($channelIsFound);
-    //     if (!empty($channelIsFound)) {
-    //         $channel = $channelIsFound;
-    //         return response()->json($channel);
-    //     } else {
-    //         $channel = new Channel;
-    //         $channel->name = "dm";
-    //         $channel->type = "dm";
-    //         $channel->save();
-    //         $channel->users()->attach($sender);
-    //         $channel->users()->attach($receiver);
-    //         return response()->json($channel);
-    //     }
-    // }
+    public function seenMessage(Request $request)
+    {
+        try {
+            $data = MessageService::seenMessage($request);
+            return $this->success(
+                $request,
+                $data,
+                MessageConstant::$SEEN_MESSAGE_SUCCESS,
+            );
+        } catch (\Throwable $th) {
+            return $this->error(
+                $request,
+                $th,
+                MessageConstant::$SEEN_MESSAGE_FAILED
+            );
+        }
+    }
+    public function removeMessage(Request $request, int $messageId)
+    {
+        try {
+            $data = MessageService::removeMessage($messageId);
+            return $this->success(
+                $request,
+                $data,
+                MessageConstant::$REMOVE_MESSAGE_SUCCESS,
+            );
+        } catch (\Throwable $th) {
+            return $this->error(
+                $request,
+                $th,
+                MessageConstant::$REMOVE_MESSAGE_FAILED
+            );
+        }
+    }
+    public function restoreMessage(Request $request, int $messageId)
+    {
+        try {
+            $data = MessageService::restoreMessage($messageId);
+            return $this->success(
+                $request,
+                $data,
+                MessageConstant::$RESTORE_MESSAGE_SUCCESS,
+            );
+        } catch (\Throwable $th) {
+            return $this->error(
+                $request,
+                $th,
+                MessageConstant::$RESTORE_MESSAGE_FAILED
+            );
+        }
+    }
+    public function deleteMessage(Request $request, int $messageId)
+    {
+        try {
+            $data = MessageService::deleteMessage($messageId);
+            return $this->success(
+                $request,
+                $data,
+                MessageConstant::$RESTORE_MESSAGE_SUCCESS,
+            );
+        } catch (\Throwable $th) {
+            return $this->error(
+                $request,
+                $th,
+                MessageConstant::$RESTORE_MESSAGE_FAILED
+            );
+        }
+    }
 }

@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 interface IMessageService
 {
-    public static function storeMessage(StoreMessageRequest $request);
+    public static function createMessage(StoreMessageRequest $request);
+    public static function seenMessage(Request $request);
+    public static function removeMessage(int $messageId);
+    public static function deleteMessage(int $messageId);
 }

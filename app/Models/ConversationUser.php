@@ -11,13 +11,15 @@ class ConversationUser extends Model
     public $timestamps = true;
     protected $fillable = [
         'id',
-        'is_owner'
+        'is_owner',
+        'member_id',
+        'conversation_id',
     ];
     function conversation()
     {
         return $this->belongsTo(Conversation::class);
     }
-    function user()
+    function member()
     {
         return $this->belongsTo(User::class);
     }
